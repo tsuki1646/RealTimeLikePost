@@ -69,10 +69,9 @@ const signup = () => {
                 cancel = canceler;
                 })
             });
-
-            if (errorMsg !== null) setErrorMsg(null);
-
+            
             if (res.data === "Available") {
+                if (errorMsg !== null) setErrorMsg(null);
                 setUsernameAvailable(true);
                 setUser(prev => ({ ...prev, username }));
             }
