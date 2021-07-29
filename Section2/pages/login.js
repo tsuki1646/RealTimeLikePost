@@ -1,9 +1,10 @@
-import React, { useState, useEffect }  from 'react'
-import baseUrl from "../utils/baseUrl"
-import axios from "axios"
-import { HeaderMessage, FooterMessage } from '../components/Common/WelcomeMessage'
-import { Form, Button, Message, Segment, Divider } from 'semantic-ui-react'
-import {loginUser} from '../utils/authUser'
+import React, { useState, useEffect }  from 'react';
+import baseUrl from "../utils/baseUrl";
+import axios from "axios";
+import { HeaderMessage, FooterMessage } from '../components/Common/WelcomeMessage';
+import { Form, Button, Message, Segment, Divider } from 'semantic-ui-react';
+import {loginUser} from '../utils/authUser';
+import cookie from "js-cookie"
 
 const login = () => {
     const [user, setUser] = useState({
@@ -36,6 +37,12 @@ const login = () => {
         e.preventDefault();
         await loginUser(user, setErrorMsg, setFormLoading)
     }
+
+    useEffect(()=>{
+        document.title='Welcome Back'
+        const userEmail = cookie.get('userEmail')
+        if(userEmail) setUser(prev=>({...prev, email:userEmail}))
+    },[]);
 
     return (
         <>

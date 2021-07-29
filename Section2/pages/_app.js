@@ -1,4 +1,3 @@
-import App from "next/app";
 import axios from "axios";
 import { parseCookies, destroyCookie } from "nookies";
 import baseUrl from "../utils/baseUrl";
@@ -7,18 +6,34 @@ import Layout from "../components/Layout/Layout";
 import "react-toastify/dist/ReactToastify.css";
 import 'semantic-ui-css/semantic.min.css'
 
-class MyApp extends App{
-    static async getInitialProps({ Component, ctx }) {
-        const { token } = parseCookies(ctx);
-        let pageProps = {};
+function MyApp({Component, pageProps}){
+    return(
+        <Layout {...pageProps}>
+            <Component {...pageProps} />
+        </Layout>
+    );
+}
 
-        const protectedRoutes = ctx.pathname === "/";
+MyApp.getInitialProps = async({Component, ctx})=>{
+    const { token } = parseCookies(ctx);
+    let pageProps = {};
 
-        if (!token) {
+    const protectedRoutes = 
+        ctx.pathname === "/" ||
+        ctx.pathname === "/[username]" ||
+        ctx.pathname === "/notifications" ||
+        ctx.pathname === "/post/[postId]" ||
+        ctx.pathname === "/messages" ||
+        ctx.pathname === "/search"
+    ;
+
+    if (!token) 
+    {
         protectedRoutes && redirectUser(ctx, "/login");
-        }
-        //
-        else {
+    }
+    //
+    else 
+    {
         if (Component.getInitialProps) {
             pageProps = await Component.getInitialProps(ctx);
         }
@@ -38,20 +53,10 @@ class MyApp extends App{
             destroyCookie(ctx, "token");
             redirectUser(ctx, "/login");
         }
-        }
-
-        return { pageProps };
     }
-    
-    render(){
-        const { Component, pageProps } = this.props;
 
-        return (
-            <Layout {...pageProps}>
-                <Component {...pageProps} />
-            </Layout>
-        )
-    }
+    console.log('PageProps:' + pageProps);
+    return { pageProps };
 }
 
 export default MyApp;

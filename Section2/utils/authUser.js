@@ -30,10 +30,13 @@ export const loginUser = async (user, setError, setLoading) => {
 };
 
 export const redirectUser = (ctx, location) => {
-  if (ctx.req) {
+  if (ctx.req) //user is on Server side => direct to the location on Server
+  {
     ctx.res.writeHead(302, { Location: location });
     ctx.res.end();
-  } else {
+  } 
+  else //user is on Client side
+  {
     Router.push(location);
   }
 };
