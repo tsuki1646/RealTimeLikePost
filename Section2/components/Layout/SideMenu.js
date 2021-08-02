@@ -16,7 +16,7 @@ const SideMenu = ({user: {unreadNotification, email, unreadMessage, username}}) 
             >
                 <Link href="/">
                     <List.Item active={isActive('/')}>
-                        <Icon name="home" size="large" color={isActive('/') && 'teal'}/>
+                        <Icon className="home" size="large" color={isActive('/') && 'teal'}/>
                         <List.Content>
                             <List.Header content="Home" />
                         </List.Content>
@@ -27,7 +27,7 @@ const SideMenu = ({user: {unreadNotification, email, unreadMessage, username}}) 
                 <Link href="/messages">
                     <List.Item active={isActive('/messages')}>
                         <Icon 
-                            name={unreadMessage ? "hand point right": "mail outline"} 
+                            className={unreadMessage ? "hand point right": "mail outline"} 
                             size="large" 
                             color={
                                 (isActive('/messages') && 'teal') || (unreadMessage && "orange")
@@ -42,7 +42,7 @@ const SideMenu = ({user: {unreadNotification, email, unreadMessage, username}}) 
                 <Link href="/notifications">
                     <List.Item active={isActive('/notifications')}>
                         <Icon 
-                            name={unreadNotification ? "hand point right": "bell outline"} 
+                            className={unreadNotification ? "hand point right": "bell outline"} 
                             size="large" 
                             color={
                                 (isActive('/notifications') && 'teal') || (unreadNotification && "orange")
@@ -56,7 +56,7 @@ const SideMenu = ({user: {unreadNotification, email, unreadMessage, username}}) 
 
                 <Link href={`/${username}`}>
                     <List.Item active={router.query.username === username}>
-                        <Icon name="user" size="large" color={router.query.username === username && 'teal'}/>
+                        <Icon className="user" size="large" color={router.query.username === username && 'teal'}/>
                         <List.Content>
                             <List.Header content="Account" />
                         </List.Content>
@@ -66,7 +66,7 @@ const SideMenu = ({user: {unreadNotification, email, unreadMessage, username}}) 
 
                
                 <List.Item onClick={() =>logoutUser(email)}>
-                    <Icon name="log out" size="large" />
+                    <Icon className="log out" size="large" />
                     <List.Content>
                         <List.Header content="Logout" />
                     </List.Content>
