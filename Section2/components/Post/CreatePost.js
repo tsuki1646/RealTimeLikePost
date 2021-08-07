@@ -33,8 +33,8 @@ const CreatePost = ({user, setPosts}) => {
         border: "dotted",
         paddingTop: media === null && "60px",
         cursor: "pointer",
-        borderBlock: highlighted ? "green" : "black"
-    })
+        borderColor: highlighted ? "green" : "black"
+    });
 
     const handleSubmit = async e =>{
         e.preventDefault();
@@ -102,7 +102,7 @@ const CreatePost = ({user, setPosts}) => {
                         name="media" 
                         style={{display: "none"}}
                         type="file"
-                        accept = "image/"
+                        accept = "image/*"
                     />                   
                 </Form.Group>
 
@@ -111,17 +111,17 @@ const CreatePost = ({user, setPosts}) => {
 
                     style={addStyles()}
 
-                    onDragOver={(e) =>{
+                    onDragOver={e =>{
                         e.preventDefault()
                         setHighlighted(true)
                     }}
 
-                    onDragLeave={(e) =>{
+                    onDragLeave={e =>{
                         e.preventDefault()
                         setHighlighted(false)
                     }}
 
-                    onDrop={(e) =>{
+                    onDrop={e =>{
                         e.preventDefault()
                         setHighlighted(true);
 
@@ -143,7 +143,7 @@ const CreatePost = ({user, setPosts}) => {
                 ) : (
                     <>
                         <Image
-                            style = {{height: '150px', width:"200px"}} 
+                            style = {{height: '150px', width:"150px"}} 
                             src={mediaPreview} 
                             alt="PostImage" 
                             centered size="medium"
@@ -166,6 +166,7 @@ const CreatePost = ({user, setPosts}) => {
                 
 
            </Form>
+           <Divider />
         </>
     )
 }

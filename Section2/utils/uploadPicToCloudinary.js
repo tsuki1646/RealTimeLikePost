@@ -4,7 +4,7 @@ const uploadPic = async(media) =>{
     try{
         const form = new FormData()
         form.append('file', media)
-        form.append('upload preset', 'social_media_app')
+        form.append('upload_preset', 'social_media_app')
         form.append('cloud_name', 'chiba')
 
         const res = await axios.post(process.env.CLOUDINARY_URL, form)
