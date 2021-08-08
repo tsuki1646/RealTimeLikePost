@@ -15,6 +15,9 @@ import CommentInputField from './CommentInputField';
 import calculateTime from "../../utils/calculateTime";
 import Link from "next/link";
 import { deletePost, likePost } from '../../utils/postActions';
+import LikesList from './LikesList';
+import ImageModal from './ImageModal';
+import NoImageModal from './NoImageModal';
 
 const CardPost = ({post, user, setPosts, setShowToastr}) => {
     const [likes, setLikes] = useState(post.likes);
@@ -25,8 +28,35 @@ const CardPost = ({post, user, setPosts, setShowToastr}) => {
 
     const [error, setError] = useState(null);
 
+    const [showModal, setShowModal] = useState(false);
+
+    const addPropsToModal = () => ({
+        post, 
+        user, 
+        setLikes, 
+        likes, 
+        isLiked, 
+        comments, 
+        setComments
+    })
+
     return (
         <>
+            {showModal && (
+                <Modal
+                open={showModal}
+                closeIcon
+                closeOnDimmerClick
+                onClose={() => setShowModal(false)}>
+                    <Modal.Content>
+                        {post.picUrl ? (
+                        <ImageModal {...addPropsToModal()} />
+                        ) : (
+                        <NoImageModal {...addPropsToModal()} />
+                        )}
+                    </Modal.Content>
+                </Modal>
+            )}
             <Segment basic>
                 <Card color="teal" fluid>
                     {post.picUrl && (
@@ -37,6 +67,7 @@ const CardPost = ({post, user, setPosts, setShowToastr}) => {
                             wrapped
                             ui={false}
                             alt="PostImage"
+                            onClick={()=> setShowModal(true)}
                         />
                     )}
 
@@ -83,20 +114,25 @@ const CardPost = ({post, user, setPosts, setShowToastr}) => {
                     </Card.Content>
 
                     <Card.Content extra>
-                        <Icon 
-                            name={isLiked ?'heart':'heart outline'}
+                        <Icon
+                            name={isLiked ? "heart" : "heart outline"}
                             color="red"
-                            style={{cursor:"pointer"}}
-                            onClick ={() =>
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
                                 likePost(post._id, user._id, setLikes, isLiked ? false : true)
                             }
                         />
 
-                        {likes.length > 0 && (
-                            <span className="spanLikesList">
-                                {`${likes.length} ${likes.length===1?"like":"likes"}`}
-                            </span>
-                        )}
+                        <LikesList
+                            postId={post._id}
+                            trigger={
+                                likes.length > 0 && (
+                                <span className="spanLikesList">
+                                    {`${likes.length} ${likes.length === 1 ? "like" : "likes"}`}
+                                </span>
+                                )
+                            }
+                        />
 
                         <Icon 
                             className="comment outline" 
@@ -119,7 +155,13 @@ const CardPost = ({post, user, setPosts, setShowToastr}) => {
                         )}
 
                         {comments.length >3 && (
-                            <Button content="View More" color="teal" basic circular/>
+                            <Button 
+                                content="View More" 
+                                color="teal" 
+                                basic 
+                                circular
+                                onClick={() => setShowModal(true)}
+                            />
                         )}
 
                         <Divider hidden/>
