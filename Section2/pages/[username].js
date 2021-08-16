@@ -11,6 +11,10 @@ import ProfileHeader from "../components/Profile/ProfileHeader";
 import { PlaceHolderPosts } from '../components/Layout/PlaceHolderGroup';
 import CardPost from '../components/Post/CardPost';
 import { PostDeleteToastr, Toast } from '../components/Layout/Toastr';
+import Followers from '../components/Profile/Followers';
+import Following from '../components/Profile/Following';
+import UpdateProfile from "../components/Profile/UpdateProfile";
+import Settings from "../components/Profile/Settings";
 
 const ProfilePage = ({
     profile, 
@@ -131,6 +135,7 @@ const ProfilePage = ({
                         {activeItem === "settings" && (
                         <Settings newMessagePopup={user.newMessagePopup} />
                         )}
+
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

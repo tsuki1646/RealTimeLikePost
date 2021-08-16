@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { Segment, Grid, Image, Divider, Header, Button, List } from 'semantic-ui-react';
+import { followUser, unfollowUser } from "../../utils/profileActions";
 
 const ProfileHeader = ({
     profile, 

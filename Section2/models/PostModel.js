@@ -11,6 +11,8 @@ const PostSchema = new Schema(
 
         picUrl:{type:String},
 
+        profilePicUrl: {type:String},
+
         likes: [{ user: { type: Schema.Types.ObjectId, ref: "User" } }],
 
         comments: [

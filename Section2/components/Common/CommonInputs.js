@@ -14,6 +14,7 @@ const CommonInputs = ({user:{bio, facebook, instagram, youtube, twitter},
             name="bio" 
             value={bio} 
             onChange={handleChange}
+            placeholder="bio"
         />
 
         <Button

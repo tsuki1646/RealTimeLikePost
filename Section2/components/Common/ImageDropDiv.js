@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useRef} from 'react';
 import { Form, Segment, Image, Icon, Header } from 'semantic-ui-react';
+import {useRouter} from "next/router"
 
 const ImageDropDiv = (
     {highlighted,
@@ -8,8 +9,11 @@ const ImageDropDiv = (
     handleChange,
     mediaPreview,
     setMediaPreview,
-    setMedia}
-) => {
+    setMedia,
+    profilePicUrl
+}) => {
+    const router = useRouter()
+    const signupRoute = router.pathname ==='/signup';
     return (
         <>
             <Form.Field>
@@ -46,14 +50,27 @@ const ImageDropDiv = (
                         {mediaPreview===null?
                         (<>
                             <Segment {...highlighted && {color:"green"}}  placeholder basic>
-                                <Header icon>
-                                    <Icon 
-                                        name="file image outline" 
-                                        style={{cursor: "pointer"}} 
-                                        onClick={() =>inputRef.current.click()}
-                                    />
-                                    Drag n Drop or Click To Upload Image
-                                </Header>
+                                {signupRoute ? (
+                                    <Header icon>
+                                        <Icon 
+                                            name="file image outline" 
+                                            style={{cursor: "pointer"}} 
+                                            onClick={() =>inputRef.current.click()}
+                                        />
+                                        Drag n Drop or Click To Upload Image
+                                    </Header>
+                                ) :(
+                                    <span style={{textAlign: "center"}}>
+                                        <Image 
+                                            src={profilePicUrl}
+                                            style={{cursor: "pointer"}}
+                                            onClick={() =>inputRef.current.click()}
+                                            size="medium"
+                                            centered
+                                        />
+                                    </span>
+                                )}
+                                
                             </Segment>
                         </>)
                         :
@@ -64,7 +81,7 @@ const ImageDropDiv = (
                                     size="medium" 
                                     centered 
                                     style={{cursor:"pointer"}}
-                                    onClick={() =>inputRef.current.click()}
+                                    onClick={() =>inputRef.current.click()}                                    
                                 />
 
                             </Segment>
