@@ -77,6 +77,7 @@ const ProfilePage = ({
                             activeItem={activeItem} 
                             handleItemClick={handleItemClick} 
                             followersLength={followersLength}
+                            followingLength={followingLength}
                             ownAccount = {ownAccount}
                             loggedUserFollowStats = {loggedUserFollowStats}
                         />

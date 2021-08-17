@@ -9,7 +9,7 @@ const Axios = axios.create({
     headers:{Authorization: cookie.get("token")}
 });
 
-export const followUser = async(userToFollowId, setUserFollowStats)=>{
+export const followUser = async (userToFollowId, setUserFollowStats)=>{
     try{
         await Axios.post(`/follow/${userToFollowId}`);
 
@@ -22,27 +22,20 @@ export const followUser = async(userToFollowId, setUserFollowStats)=>{
     }
 }
 
-export const unFollowUser = async(userToUnFollowId, setUserFollowStats)=>{
-    try{
-        await Axios.put(`/unfollow/${userToUnFollowId}`);
+export const unfollowUser = async (userToUnfollowId, setUserFollowStats) => {
+  try {
+    await Axios.put(`/unfollow/${userToUnfollowId}`);
 
-        setUserFollowStats(prev =>({
-            ...prev, 
-            following:prev.following.filter(
-                following => following.user !== userToUnFollowId
-            )
-        }));
-    }catch(error){
-        alert(catchErrors(error));
-    }
-}
+    setUserFollowStats(prev => ({
+      ...prev,
+      following: prev.following.filter(following => following.user !== userToUnfollowId)
+    }));
+  } catch (error) {
+    alert(catchErrors(error));
+  }
+};
 
-export const profileUpdate = async(
-    profile, 
-    setLoading, 
-    setError, 
-    profilePicUrl
-) =>{       
+export const profileUpdate = async (profile, setLoading, setError, profilePicUrl) =>{       
     try{
         const {bio, facebook, youtube, twitter, instagram} = profile;
 
@@ -57,7 +50,18 @@ export const profileUpdate = async(
     setLoading(false);
     Router.reload();
     }catch(error){
-        setError (cathcError(error));
+        setError (cathcErrors(error));
         setLoading(false);
     }
 }
+
+export const passwordUpdate = async (setSuccess, userPasswords) => {
+  const { currentPassword, newPassword } = userPasswords;
+  try {
+    await Axios.post(`/settings/password`, { currentPassword, newPassword });
+
+    setSuccess(true);
+  } catch (error) {
+    alert(catchErrors(error));
+  }
+};

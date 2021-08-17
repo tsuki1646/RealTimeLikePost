@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Form, Button, Divider, Message, List, Checkbox} from 'semantic-ui-react';
+import { passwordUpdate } from '../../utils/profileActions';
 
 const Settings = ({newMessagePopup}) => {
     
@@ -25,60 +26,60 @@ const Settings = ({newMessagePopup}) => {
 
     return (
         <>
-        {success && (
-            <>
-            <Message success icon="check circle" header="Updated Successfully" />
-            <Divider hidden />
-            </>
-        )}
-
-        <List size="huge" animated>
-            <List.Item>
-            <List.Icon name="user secret" size="large" verticalAlign="middle" />
-            <List.Content>
-                <List.Header
-                onClick={() => showPasswordFields(!passwordFields)}
-                as="a"
-                content="Update Password"
-                />
-            </List.Content>
-
-            {passwordFields && (
-                <UpdatePassword
-                    setSuccess={setSuccess}
-                    showPasswordFields={showPasswordFields}
-                />
+            {success && (
+                <>
+                <Message success icon="check circle" header="Updated Successfully" />
+                <Divider hidden />
+                </>
             )}
-            </List.Item>
-            <Divider />
 
-            <List.Item>
-            <List.Icon name="paper plane outline" size="large" verticalAlign="middle" />
+            <List size="huge" animated>
+                <List.Item>
+                <List.Icon name="user secret" size="large" verticalAlign="middle" />
+                <List.Content>
+                    <List.Header
+                    onClick={() => showPasswordFields(!passwordFields)}
+                    as="a"
+                    content="Update Password"
+                    />
+                </List.Content>
 
-            <List.Content>
-                <List.Header
-                onClick={() => showNewMessageSettings(!newMessageSettings)}
-                as="a"
-                content="Show New Message Popup?"
-                />
-            </List.Content>
+                {passwordFields && (
+                    <UpdatePassword
+                        setSuccess={setSuccess}
+                        showPasswordFields={showPasswordFields}
+                    />
+                )}
+                </List.Item>
+                <Divider />
 
-            <div style={{ marginTop: "10px" }}>
-                Control whether a Popup should appear when there is a New Message or not.
-                <br />
-                <br />
-                <Checkbox
-                checked={popupSetting}
-                toggle
-                onChange={() =>
-                    toggleMessagePopup(popupSetting, setPopupSetting, setSuccess)
-                }
-                />
-            </div>
-            </List.Item>
+                <List.Item>
+                <List.Icon name="paper plane outline" size="large" verticalAlign="middle" />
 
-            <Divider />
-        </List>
+                <List.Content>
+                    <List.Header
+                    onClick={() => showNewMessageSettings(!newMessageSettings)}
+                    as="a"
+                    content="Show New Message Popup?"
+                    />
+                </List.Content>
+
+                <div style={{ marginTop: "10px" }}>
+                    Control whether a Popup should appear when there is a New Message or not.
+                    <br />
+                    <br />
+                    <Checkbox
+                    checked={popupSetting}
+                    toggle
+                    onChange={() =>
+                        toggleMessagePopup(popupSetting, setPopupSetting, setSuccess)
+                    }
+                    />
+                </div>
+                </List.Item>
+
+                <Divider />
+            </List>
         </>
     );
 }
