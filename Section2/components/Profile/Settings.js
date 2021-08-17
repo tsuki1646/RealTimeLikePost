@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Form, Button, Divider, Message, List, Checkbox} from 'semantic-ui-react';
-import { passwordUpdate } from '../../utils/profileActions';
+import { passwordUpdate, toggleMessagePopup } from '../../utils/profileActions';
 
 const Settings = ({newMessagePopup}) => {
     

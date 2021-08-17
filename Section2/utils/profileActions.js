@@ -65,3 +65,13 @@ export const passwordUpdate = async (setSuccess, userPasswords) => {
     alert(catchErrors(error));
   }
 };
+
+export const toggleMessagePopup = async (popupSetting, setPopupSetting, setSuccess) =>{
+    try {
+        await Axios.post(`/settings/messagePopup`);
+        setPopupSetting(!popupSetting);
+        setSuccess(true);
+    } catch (error){
+        alert(cathcErrors(error));
+    }
+}
