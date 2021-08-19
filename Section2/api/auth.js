@@ -47,16 +47,16 @@ router.post("/", async (req, res) => {
       return res.status(401).send("Invalid Credentials");
     }
 
-    const notificationModel = await NotificationModel.findOne({user: user._id});
+    // const notificationModel = await NotificationModel.findOne({user: user._id});
 
-    if(!notificationModel){
-      await new NotificationModel({user: user._id, notifications:[]}).save();
-    }
+    // if(!notificationModel){
+    //   await new NotificationModel({user: user._id, notifications:[]}).save();
+    // }
 
     const chatModel = await ChatModel.findOne({user: user._id});
 
     if(!chatModel){
-      await new ChatModel({user: user._id, notifications:[]}).save();
+      await new ChatModel({user: user._id, chats:[]}).save();
     }
 
     const payload = { userId: user._id };

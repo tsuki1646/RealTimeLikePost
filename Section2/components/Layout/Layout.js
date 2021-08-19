@@ -19,7 +19,7 @@ function Layout({ children, user }) {
   const contextRef = createRef();
   const router = useRouter();
 
-  const messagesRoute = router.pathname==="/message"
+  const messagesRoute = router.pathname === "/messages";
 
   Router.onRouteChangeStart = () => nprogress.start();
   Router.onRouteChangeComplete = () => nprogress.done();

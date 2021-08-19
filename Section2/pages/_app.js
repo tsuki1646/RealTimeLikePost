@@ -1,3 +1,4 @@
+import App from "next/app";
 import axios from "axios";
 import { parseCookies, destroyCookie } from "nookies";
 import baseUrl from "../utils/baseUrl";
