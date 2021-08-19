@@ -11,13 +11,40 @@ const connectDb = require("./utilsServer/connectDb");
 connectDb();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
+const {addUser, removeUser} = require('./utilsServer/roomActions');
+const {loadMessages} = require('./utilsServer/messageActions')
 
-// io.on('connection', socket =>{
-//   socket.on("helloWorld", data =>{
-//     console.log({name: data.name, age: data.age});
-//   });
-//   socket.emit('dataReceived', {msg: `Hello ${name}, data received`})
-// })
+io.on('connection', socket =>{
+  // socket.on("helloWorld", ({name, age}) =>{
+  //   console.log({name, age});
+  //   socket.emit('dataReceived', {msg: `Hello ${name}, data received`})
+  // });
+  socket.on('join', async ({userId})=>{
+    const users = await addUser(userId, socket.id);
+
+    console.log(users);
+
+    setInterval(() =>{
+      socket.emit('connectedUsers', {
+        users: users.filter(user => user.userId !== userId)
+      });
+    }, 10000)
+  });
+
+  socket.on('loadMessages', async({userId, messagesWith})=>{
+    const {chat, error} = await loadMessages(userId, messagesWith);
+    
+    if(!error){
+      socket.emit("messagesLoaded", {chat});
+    }
+  })
+
+  socket.on("disconnect", ()=>{
+    removeUser(socket.id);
+    console.log('User disconnected');
+  });
+  
+})
 
 nextApp.prepare().then(() => {
   app.use("/api/signup", require("./api/signup"));

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Segment } from "semantic-ui-react";
 
-function MessageInputField({ sendMsg }) {
+function MessageInputField({ sendMsg, socket, user, messagesWith }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
 
