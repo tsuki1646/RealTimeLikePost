@@ -15,6 +15,9 @@ import getUserInfo from "../utils/getUserInfo";
 import newMsgSound from "../utils/newMsgSound";
 import cookie from "js-cookie";
 
+const scrollDivToBottom = divRef =>
+  divRef.current !== null && divRef.current.scrollIntoView({ behaviour: "smooth" });
+
 const Messages = ({chatsData, user}) => {
     const [chats, setChats] = useState(chatsData);
     const router = useRouter();
@@ -23,6 +26,8 @@ const Messages = ({chatsData, user}) => {
 
     const [messages, setMessages] = useState([]);
     const [bannerData, setBannerData] = useState({ name: "", profilePicUrl: "" });
+
+    const divRef = useRef();
 
     //This ref is for persiting the state of query string in url throughout re-renders
     //This ref is query string inside url
@@ -77,7 +82,7 @@ const Messages = ({chatsData, user}) => {
                 });
 
                 openChatId.current = chat.messagesWith._id;
-                //divRef.current && scrollDivToBottom(divRef);
+                divRef.current && scrollDivToBottom(divRef);
             });
 
             socket.current.on("noChatFound", async () => {
@@ -178,6 +183,11 @@ const Messages = ({chatsData, user}) => {
         }
     }, []);
 
+    //Scroll
+    useEffect(() => {
+        messages.length > 0 && scrollDivToBottom(divRef);
+    }, [messages]);
+
     return (
         <>
             <Segment padded basic size="large" style={{marginTop: "5px"}}>
@@ -229,7 +239,7 @@ const Messages = ({chatsData, user}) => {
                                     {messages.length > 0 &&
                                     messages.map((message, i) => (
                                         <Message
-                                            //divRef={divRef}
+                                            divRef={divRef}
                                             key={i}
                                             bannerProfilePic={bannerData.profilePicUrl}
                                             setMessages={setMessages}

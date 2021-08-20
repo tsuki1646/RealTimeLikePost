@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Icon, Popup } from "semantic-ui-react";
 import calculateTime from "../../utils/calculateTime";
 
-function Message({ message, user, setMessages, deleteMsg, bannerProfilePic, divRef }) {
+function Message({ message, user, setMessages, messagesWith, deleteMsg, bannerProfilePic, divRef }) {
   const [deleteIcon, showDeleteIcon] = useState(false);
 
   const ifYouSender = message.sender === user._id;
