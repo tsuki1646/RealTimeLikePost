@@ -188,6 +188,34 @@ const Messages = ({chatsData, user}) => {
         messages.length > 0 && scrollDivToBottom(divRef);
     }, [messages]);
 
+    const deleteMsg =( messageId) =>{
+        if(socket.current){
+            socket.current.emit('deleteMsg', {
+                userId: user._id, 
+                messagesWith: openChatId.current, 
+                messageId
+            });
+
+            socket.current.on('msgDeleted', ()=>{
+                setMessages(prev=>prev.filter(message=>message._id !== messageId))
+            })
+        }
+    }
+
+    const deleteChat = async messagesWith =>{
+        try {
+            await axios.delete(`${baseUrl}/api/chats/${messagesWith}`, {
+                headers: {Authorization: cookie.get('token')}}
+            );
+
+            setChats(prev => prev.filter(chat =>chat.messagesWith !== messagesWith));
+            router.push("/messages", underfined, {shallow: true});
+
+        }catch(error){
+            alert('Error deleting chat')
+        }
+    }
+
     return (
         <>
             <Segment padded basic size="large" style={{marginTop: "5px"}}>
@@ -214,6 +242,7 @@ const Messages = ({chatsData, user}) => {
                                 chat={chat}
                                 setChats={setChats}
                                 connectedUsers={connectedUsers}
+                                deleteChat ={deleteChat}
                             />
                             ))}
                         </Segment>
@@ -245,7 +274,7 @@ const Messages = ({chatsData, user}) => {
                                             setMessages={setMessages}
                                             message={message}
                                             user={user}
-                                            //deleteMsg={deleteMsg}
+                                            deleteMsg={deleteMsg}
                                         />
                                     ))}
                                 </div>

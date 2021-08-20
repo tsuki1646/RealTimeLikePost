@@ -3,7 +3,7 @@ import { Divider, Comment, Icon, List } from "semantic-ui-react";
 import { useRouter } from "next/router";
 import calculateTime from "../../utils/calculateTime";
 
-function Chat({ chat, setChats, connectedUsers }) {
+function Chat({ chat, setChats, connectedUsers, deleteChat }) {
   const router = useRouter();
 
   const isOnline =
