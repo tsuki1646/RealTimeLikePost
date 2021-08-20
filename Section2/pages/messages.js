@@ -3,14 +3,17 @@ import io from "socket.io-client"
 import axios from "axios"
 import baseUrl from "../utils/baseUrl"
 import { parseCookies } from 'nookies'
+import { useRouter } from "next/router";
 import { Segment, Header, Divider, Comment, Grid } from "semantic-ui-react";
 import Chat from "../components/Chats/Chat"
 import ChatListSearch from '../components/Chats/ChatListSearch';
-import { useRouter } from "next/router";
 import { NoMessages } from "../components/Layout/NoData";
 import Banner from "../components/Messages/Banner";
 import MessageInputField from "../components/Messages/MessageInputField";
 import Message from "../components/Messages/Message";
+import getUserInfo from "../utils/getUserInfo";
+import newMsgSound from "../utils/newMsgSound";
+import cookie from "js-cookie";
 
 const Messages = ({chatsData, user}) => {
     const [chats, setChats] = useState(chatsData);
@@ -25,8 +28,9 @@ const Messages = ({chatsData, user}) => {
     //This ref is query string inside url
     const openChatId = useRef("");
     
+    //CONNECTION USE EFFECT
     useEffect(()=>{
-        if(!socket.current){
+        if (!socket.current) {
             socket.current = io(baseUrl);
         }
 
@@ -36,60 +40,87 @@ const Messages = ({chatsData, user}) => {
             // socket.current.on('dataReceived', ({msg})=>{
             //     console.log(msg);
             // });
-            socket.current.emit('join', {userId: user._id});
-            socket.current.on('connectedUsers', ({users})=>{
+            socket.current.emit("join", { userId: user._id });
+
+            socket.current.on("connectedUsers", ({ users }) => {
                 users.length > 0 && setConnectedUsers(users);
             });
-        }
 
-        if(chats.length >0 && !router.query.message){
-            router.push(`/messages?message=${chats[0].messagesWith}`, 
-                undefined, {
+            if (chats.length > 0 && !router.query.message) {
+                router.push(`/messages?message=${chats[0].messagesWith}`, undefined, {
                 shallow: true
-            });
+                });
+            }
         }
 
         return()=>{
-            if(socket.current){
-                socket.current.emit('disconnect');
-                socket.current.off()
+            if (socket.current) {
+                socket.current.emit("disconnect");
+                socket.current.off();
             }
-        }
+        };
     }, [])
 
-    useEffect(() =>{
-        const loadMessages = ()=>{
-            socket.current.emit('loadMessages', {
-                userId: user._id, 
+    //LOAD MESSAGES USE EFFECT
+    useEffect(() => {
+        const loadMessages = () => {
+            socket.current.emit("loadMessages", {
+                userId: user._id,
                 messagesWith: router.query.message
             });
 
-            socket.current.on('messagesLoaded', ({chat})=>{
-                //console.log(chat);
+            socket.current.on("messagesLoaded", async ({ chat }) => {
                 setMessages(chat.messages);
-                setBannerData({name: chat.messagesWith.name, 
-                    profilePicUrl: chat.messagesWith.profilePicUrl
+                setBannerData({
+                name: chat.messagesWith.name,
+                profilePicUrl: chat.messagesWith.profilePicUrl
                 });
 
                 openChatId.current = chat.messagesWith._id;
-            })
+                //divRef.current && scrollDivToBottom(divRef);
+            });
+
+            // socket.current.on("noChatFound", async () => {
+            //     const { name, profilePicUrl } = await getUserInfo(router.query.message);
+
+            //     setBannerData({ name, profilePicUrl });
+            //     setMessages([]);
+
+            //     openChatId.current = router.query.message;
+            // });
         };
 
-        if(socket.current){
-            loadMessages();
-        }
-
+        if (socket.current && router.query.message) loadMessages();
     }, [router.query.message]);
 
     const sendMsg = msg => {
         if (socket.current) {
-        socket.current.emit("sendNewMsg", {
-            userId: user._id,
-            msgSendToUserId: openChatId.current,
-            msg
-        });
+            socket.current.emit("sendNewMsg", {
+                userId: user._id,
+                msgSendToUserId: openChatId.current,
+                msg
+            });
         }
     };
+
+    //Confirming msg is sent and receiving the messages
+    useEffect(()=>{
+        if(socket.current){
+            socket.current.on('msgSent', ({newMsg})=>{
+                if (newMsg.receiver === openChatId.current) {
+                    setMessages(prev => [...prev, newMsg]);
+
+                    setChats(prev => {
+                        const previousChat = prev.find(chat => chat.messagesWith === newMsg.receiver);
+                        previousChat.lastMessage = newMsg.msg;
+                        previousChat.date = newMsg.date;
+
+                        return [...prev];
+                    });
+                }
+            })
+        }
+    }, [])
 
     return (
         <>
@@ -153,7 +184,7 @@ const Messages = ({chatsData, user}) => {
                                     ))}
                                 </div>
 
-                                <MessageInputField socket={socket.current} user={user} messagesWith={openChatId.current} sendMsg={sendMsg} />                            
+                                <MessageInputField sendMsg={sendMsg} />                            
                             </>
                         )}
                     </Grid.Column>

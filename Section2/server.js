@@ -12,7 +12,7 @@ connectDb();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const {addUser, removeUser} = require('./utilsServer/roomActions');
-const {loadMessages} = require('./utilsServer/messageActions')
+const {loadMessages, sendMsg} = require('./utilsServer/messageActions')
 
 io.on('connection', socket =>{
   // socket.on("helloWorld", ({name, age}) =>{
@@ -36,6 +36,14 @@ io.on('connection', socket =>{
     
     if(!error){
       socket.emit("messagesLoaded", {chat});
+    }
+  });
+
+  socket.on('sendNewMsg', async(userId, msgSendToUserId, msg)=>{
+    const {newMsg, error} = await sendMsg(userId, msgSendToUserId, msg);
+
+    if(!error){
+      socket.emit("msgSent", {newMsg});
     }
   })
 
