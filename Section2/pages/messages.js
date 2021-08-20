@@ -219,12 +219,9 @@ const Messages = ({chatsData, user}) => {
     return (
         <>
             <Segment padded basic size="large" style={{marginTop: "5px"}}>
-                <Header
-                    icon="home"
-                    content = "Go Back!"
-                    onClick={() => router.push("/")}
-                    style={{cursor: "pointer"}}
-                />
+                <a href="/">
+                    <Header icon="home" content="Go Back!" style={{ cursor: "pointer" }} />
+                </a>
                 <Divider hidden/>
                 <div style={{marginBottom: "10px"}}>
                     <ChatListSearch user={user} chats={chats} setChats={setChats}/>
