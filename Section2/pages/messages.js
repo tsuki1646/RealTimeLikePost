@@ -80,14 +80,14 @@ const Messages = ({chatsData, user}) => {
                 //divRef.current && scrollDivToBottom(divRef);
             });
 
-            // socket.current.on("noChatFound", async () => {
-            //     const { name, profilePicUrl } = await getUserInfo(router.query.message);
+            socket.current.on("noChatFound", async () => {
+                const { name, profilePicUrl } = await getUserInfo(router.query.message);
 
-            //     setBannerData({ name, profilePicUrl });
-            //     setMessages([]);
+                setBannerData({ name, profilePicUrl });
+                setMessages([]);
 
-            //     openChatId.current = router.query.message;
-            // });
+                openChatId.current = router.query.message;
+            });
         };
 
         if (socket.current && router.query.message) loadMessages();
@@ -103,24 +103,80 @@ const Messages = ({chatsData, user}) => {
         }
     };
 
-    //Confirming msg is sent and receiving the messages
-    useEffect(()=>{
-        if(socket.current){
-            socket.current.on('msgSent', ({newMsg})=>{
-                if (newMsg.receiver === openChatId.current) {
-                    setMessages(prev => [...prev, newMsg]);
+    // Confirming msg is sent and receving the messages useEffect
+    useEffect(() => {
+        if (socket.current) {
+        socket.current.on("msgSent", ({ newMsg }) => {
+            if (newMsg.receiver === openChatId.current) {
+            setMessages(prev => [...prev, newMsg]);
 
-                    setChats(prev => {
-                        const previousChat = prev.find(chat => chat.messagesWith === newMsg.receiver);
-                        previousChat.lastMessage = newMsg.msg;
-                        previousChat.date = newMsg.date;
+            setChats(prev => {
+                const previousChat = prev.find(chat => chat.messagesWith === newMsg.receiver);
+                previousChat.lastMessage = newMsg.msg;
+                previousChat.date = newMsg.date;
 
-                        return [...prev];
-                    });
-                }
-            })
+                return [...prev];
+            });
+            }
+        });
+
+        socket.current.on("newMsgReceived", async ({ newMsg }) => {
+            let senderName;
+
+            // WHEN CHAT WITH SENDER IS CURRENTLY OPENED INSIDE YOUR BROWSER
+            if (newMsg.sender === openChatId.current) {
+            setMessages(prev => [...prev, newMsg]);
+
+            setChats(prev => {
+                const previousChat = prev.find(chat => chat.messagesWith === newMsg.sender);
+                previousChat.lastMessage = newMsg.msg;
+                previousChat.date = newMsg.date;
+
+                senderName = previousChat.name;
+
+                return [...prev];
+            });
+            }
+            //
+            else {
+            const ifPreviouslyMessaged =
+                chats.filter(chat => chat.messagesWith === newMsg.sender).length > 0;
+
+            if (ifPreviouslyMessaged) {
+                setChats(prev => {
+                const previousChat = prev.find(chat => chat.messagesWith === newMsg.sender);
+                previousChat.lastMessage = newMsg.msg;
+                previousChat.date = newMsg.date;
+
+                senderName = previousChat.name;
+
+                return [
+                    previousChat,
+                    ...prev.filter(chat => chat.messagesWith !== newMsg.sender)
+                ];
+                });
+            }
+
+            //IF NO PREVIOUS CHAT WITH THE SENDER
+            else {
+                const { name, profilePicUrl } = await getUserInfo(newMsg.sender);
+                senderName = name;
+
+                const newChat = {
+                messagesWith: newMsg.sender,
+                name,
+                profilePicUrl,
+                lastMessage: newMsg.msg,
+                date: newMsg.date
+                };
+                setChats(prev => [newChat, ...prev]);
+            }
+            }
+
+            newMsgSound(senderName);
+        });
         }
-    }, [])
+    }, []);
 
     return (
         <>
