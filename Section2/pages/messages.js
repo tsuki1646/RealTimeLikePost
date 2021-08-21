@@ -203,7 +203,7 @@ const Messages = ({chatsData, user}) => {
             );
 
             setChats(prev => prev.filter(chat =>chat.messagesWith !== messagesWith));
-            router.push("/messages", underfined, {shallow: true});
+            router.push("/messages", undefined, {shallow: true});
 
         }catch(error){
             alert('Error deleting chat')
