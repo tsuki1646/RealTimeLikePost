@@ -58,12 +58,6 @@ const Messages = ({chatsData, user}) => {
             }
         }
 
-        return()=>{
-            if (socket.current) {
-                socket.current.emit("disconnect");
-                socket.current.off();
-            }
-        };
     }, [])
 
     //LOAD MESSAGES USE EFFECT
