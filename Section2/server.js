@@ -41,7 +41,7 @@ io.on('connection', socket =>{
     }
   });
 
-  socket.on('sendNewMsg', async(userId, msgSendToUserId, msg)=>{
+  socket.on('sendNewMsg', async({userId, msgSendToUserId, msg})=>{
     const {newMsg, error} = await sendMsg(userId, msgSendToUserId, msg);
     const receiverSocket = findConnectedUser(msgSendToUserId);
 
