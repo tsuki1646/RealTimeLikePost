@@ -109,3 +109,5 @@ Thumbs.db
 !.phpcs.xml.dist
 !.env.local
 !.env
+
+config.env

@@ -31,7 +31,7 @@ io.on('connection', socket =>{
     }, 10000)
   });
 
-  socket.on('loadMessages', async({userId, messagesWith})=>{
+  socket.on('loadMessages', async ({userId, messagesWith})=>{
     const {chat, error} = await loadMessages(userId, messagesWith);
     
     if(!error){
@@ -41,7 +41,7 @@ io.on('connection', socket =>{
     }
   });
 
-  socket.on('sendNewMsg', async({userId, msgSendToUserId, msg})=>{
+  socket.on('sendNewMsg', async ({userId, msgSendToUserId, msg})=>{
     const {newMsg, error} = await sendMsg(userId, msgSendToUserId, msg);
     const receiverSocket = findConnectedUser(msgSendToUserId);
 
@@ -55,12 +55,10 @@ io.on('connection', socket =>{
     !error && socket.emit("msgSent", { newMsg });
   });
 
-  socket.on("deleteMsg", async({userId, messagesWith, messageId})=>{
+  socket.on("deleteMsg", async ({ userId, messagesWith, messageId }) => {
     const { success } = await deleteMsg(userId, messagesWith, messageId);
 
-    if(success){
-      socket.emit("msgDeleted");
-    }
+    if (success) socket.emit("msgDeleted");
   });
 
   socket.on("sendMsgFromNotification", async ({ userId, msgSendToUserId, msg }) => {
@@ -94,6 +92,7 @@ nextApp.prepare().then(() => {
   app.use("/api/profile", require("./api/profile"));
   app.use("/api/notifications", require("./api/notifications"));
   app.use("/api/chats", require("./api/chats"));
+  app.use("/api/reset", require("./api/reset"));
 
   app.all("*", (req, res) => handle(req, res));
 
