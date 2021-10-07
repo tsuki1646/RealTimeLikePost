@@ -1,39 +1,40 @@
-const UserModel = require('../models/UserModel')
-const NotificationModel = require('../models/NotificationModel')
+const UserModel = require("../models/UserModel");
+const NotificationModel = require("../models/NotificationModel");
 
-const setNotificationToUnread = async userId =>{
-    try {
-        const user = await UserModel.findById(userId);
+const setNotificationToUnread = async (userId) => {
+  try {
+    const user = await UserModel.findById(userId);
 
-        if (!user.unreadNotification){
-            user.unreadNotification = true;
-            await user.save();
-        }
-    }catch (error){
-        console.error(error);
+    if (!user.unreadNotification) {
+      user.unreadNotification = true;
+      await user.save();
     }
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-const newLikeNotification = async (userId, postId, userToNotifyId) =>{
-    try{
-        const userToNotify = await Notification.findOne({user: userToNotifyId})
+const newLikeNotification = async (userId, postId, userToNotifyId) => {
+  try {
+    const userToNotify = await NotificationModel.findOne({
+      user: userToNotifyId,
+    });
 
-        const newNotification ={
-            type: "newLike",
-            user: userId,
-            post: postId,
-            date: Date.now()
-        };
+    const newNotification = {
+      type: "newLike",
+      user: userId,
+      post: postId,
+      date: Date.now(),
+    };
 
-        await userToNotify.notifications.unshift(newNotification);
-        await userToNotify.save();
+    await userToNotify.notifications.unshift(newNotification);
+    await userToNotify.save();
 
-        await setNotificationToUnread(userToNotifyId);
-        return;
-
-    }catch(error){
-        console.error(error);
-    }
+    await setNotificationToUnread(userToNotifyId);
+    return;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // REMOVE 1
@@ -43,7 +44,7 @@ const newLikeNotification = async (userId, postId, userToNotifyId) =>{
 //         const user = await NotificationModel.findOne({user: userToNotifyId});
 
 //         const notificationToRemove = user.notifications.find(
-//             notification => notification.type === "newLike" && 
+//             notification => notification.type === "newLike" &&
 //             notification.post.toString() === postId &&
 //             notification.user.toString() === userId
 //         );
@@ -65,48 +66,55 @@ const removeLikeNotification = async (userId, postId, userToNotifyId) => {
   try {
     // Here we are simply using $pull operator to remove the notification from notifications array.
     // Notice we are finding the notification inside Notifications array by adding its type, userId & postId
- 
-      await NotificationModel.findOneAndUpdate(
+
+    await NotificationModel.findOneAndUpdate(
       { user: userToNotifyId },
       {
         $pull: {
           notifications: {
             type: "newLike",
             user: userId,
-            post: postId
-          }
-        }
+            post: postId,
+          },
+        },
       }
     );
- 
+
     return;
   } catch (error) {
     console.error(error);
   }
 };
 
-const newCommentNotification = async (postId, commentId, userId, userToNotifyId, text) =>{
-    try {
-        const userToNotify = await NotificationModel.findOne({user: userToNotifyId});
+const newCommentNotification = async (
+  postId,
+  commentId,
+  userId,
+  userToNotifyId,
+  text
+) => {
+  try {
+    const userToNotify = await NotificationModel.findOne({
+      user: userToNotifyId,
+    });
 
-        const newNotification = {
-            type: "newComment",
-            user: userId,
-            post: postId,
-            commentId,
-            text,
-            date: Date.now()
-        };
+    const newNotification = {
+      type: "newComment",
+      user: userId,
+      post: postId,
+      commentId,
+      text,
+      date: Date.now(),
+    };
 
-        await userToNotify.notifications.unshift(newNotification);
-        await userToNotify.save();
-        await setNotificationToUnread(userToNotifyId);
-        return
-
-    }catch (error){
-        console.error(error);
-    }
-}
+    await userToNotify.notifications.unshift(newNotification);
+    await userToNotify.save();
+    await setNotificationToUnread(userToNotifyId);
+    return;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // REMOVE COMMENT 1
 // const removeCommentNotification = async (postId, commentId, userId, userToNotifyId) =>{
@@ -127,16 +135,19 @@ const newCommentNotification = async (postId, commentId, userId, userToNotifyId,
 
 //         await user.notifications.splice(indexOf, 1);
 //         await user.save();
-            
-            
+
 //     }catch(error){
 //         console.error(error);
 //     }
 // };
 
-
 // REMOVE COMMENT 2
-const removeCommentNotification = async (postId, commentId, userId, userToNotifyId) => {
+const removeCommentNotification = async (
+  postId,
+  commentId,
+  userId,
+  userToNotifyId
+) => {
   try {
     await NotificationModel.findOneAndUpdate(
       { user: userToNotifyId },
@@ -146,12 +157,12 @@ const removeCommentNotification = async (postId, commentId, userId, userToNotify
             type: "newComment",
             user: userId,
             post: postId,
-            commentId: commentId
-          }
-        }
+            commentId: commentId,
+          },
+        },
       }
     );
- 
+
     return;
   } catch (error) {
     console.error(error);
@@ -165,7 +176,7 @@ const newFollowerNotification = async (userId, userToNotifyId) => {
     const newNotification = {
       type: "newFollower",
       user: userId,
-      date: Date.now()
+      date: Date.now(),
     };
 
     await user.notifications.unshift(newNotification);
@@ -186,7 +197,7 @@ const newFollowerNotification = async (userId, userToNotifyId) => {
 
 //     const notificationToRemove = await user.notifications.find(
 //       notification =>
-//         notification.type === "newFollower" 
+//         notification.type === "newFollower"
 //         && notification.user.toString() === userId
 //     );
 
@@ -205,22 +216,22 @@ const newFollowerNotification = async (userId, userToNotifyId) => {
 //REMOVE FOLLOWER 2
 const removeFollowerNotification = async (userId, userToNotifyId) => {
   try {
-   await NotificationModel.findOneAndUpdate(
+    await NotificationModel.findOneAndUpdate(
       { user: userToNotifyId },
       { $pull: { notifications: { type: "newFollower", user: userId } } }
     );
- 
+
     return;
   } catch (error) {
     console.error(error);
   }
 };
 
-module.exports = { 
-    newLikeNotification, 
-    removeLikeNotification, 
-    newCommentNotification,
-    removeCommentNotification,
-    newFollowerNotification,
-    removeFollowerNotification
+module.exports = {
+  newLikeNotification,
+  removeLikeNotification,
+  newCommentNotification,
+  removeCommentNotification,
+  newFollowerNotification,
+  removeFollowerNotification,
 };
