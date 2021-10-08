@@ -6,6 +6,7 @@ import { redirectUser } from "../utils/authUser";
 import Layout from "../components/Layout/Layout";
 import "react-toastify/dist/ReactToastify.css";
 import "semantic-ui-css/semantic.min.css";
+import "cropperjs/dist/cropper.css";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -27,6 +28,7 @@ MyApp.getInitialProps = async ({ Component, ctx }) => {
     ctx.pathname === "/messages" ||
     ctx.pathname === "/search";
   if (!token) {
+    destroyCookie(ctx, "token");
     protectedRoutes && redirectUser(ctx, "/login");
   }
   //
