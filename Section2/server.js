@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
@@ -10,6 +11,24 @@ require("dotenv").config({ path: "./config.env" });
 const connectDb = require("./utilsServer/connectDb");
 connectDb();
 app.use(express.json());
+app.use(cors());
+
+const allowCrossDomain = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, access_token"
+  );
+
+  // intercept OPTIONS method
+  if ("OPTIONS" === req.method) {
+    res.send(200);
+  } else {
+    next();
+  }
+};
+
 const PORT = process.env.PORT || 3000;
 const {
   addUser,
@@ -128,6 +147,7 @@ nextApp.prepare().then(() => {
   app.use("/api/notifications", require("./api/notifications"));
   app.use("/api/chats", require("./api/chats"));
   app.use("/api/reset", require("./api/reset"));
+  app.use(allowCrossDomain);
 
   app.all("*", (req, res) => handle(req, res));
 
